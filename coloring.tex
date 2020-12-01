@@ -1,0 +1,186 @@
+\documentclass[runningheads]{format/llncs}
+\usepackage{preamble}
+
+\makeatother
+\title{
+    On the Impossibilty of\\
+    Coloring Turing Machines
+}
+
+\author{Aleksis Brezas\and Dionysis Zindros\inst{1}}
+
+\institute{University of Athens}
+
+\begin{document}
+
+\maketitle
+
+A well known result in computability theory, due to
+Chaitin~\cite{chaitin}, states that whether
+a given machine is \emph{the shortest} among its peers is an
+uncomputable and non-enumerable property. A natural question
+that arises is whether other properties of Turing Machines are
+computable or not. Rice~\cite{rice} showed that this question
+is undecidable for all non-trivial semantic properties of machines.
+Here, we turn our attention to non-semantic properties of
+machines. We show that any coloring of machines which colors
+at least one representative machine for every computable problem
+is non-enumerable. This formulation constitutes an interesting
+generalization of both the Halting Problem~\cite{turing} and
+Chaitin's Incompleteness Theorem. While the proof methods are
+well known in the literature, we believe the formulation of the
+problem in the form of machine coloring provides some alternative
+insight into these results and can prove educational.
+
+\section{The Machine Coloring Problem}
+Halting machines can be partitioned into equivalence classes based
+on the decision problem they solve.
+Among all the machines that solve a particular decision problem, some machines
+may be preferred in comparison to others. For example the
+algorithmically \emph{most efficient} machine among its peers, or the
+machine with the \emph{shortest description}~\cite{kolmogorov} seem of interest.
+Each of these properties elects one or more \emph{representatives} among
+all the machines that solve a particular problem. We are interested
+in any property which elects \emph{at least} one representative from
+the equivalence class of machines that compute the same problem.
+We call such properties \emph{colorings} of machines.
+
+\begin{definition}[Machine Coloring]
+We define a machine \emph{coloring} to be any predicate evaluated
+on Turing Machines with the following requirements:
+
+\begin{enumerate}
+    \item For every class of machines that compute the
+          same problem, the predicate
+          is \emph{true} for at least one machine in the class.
+
+    \item The predicate is \emph{false} for a machine if there
+          exists an input for which the machine does not halt.
+\end{enumerate}
+\end{definition}
+
+Observe that the trivial predicates
+applying on Turing Machines such as the predicate
+``it is \emph{not} a Turing Machine'' which is always \emph{false}, or the
+predicate ``it \emph{is} a Turing Machine'', which is always \emph{true},
+are not colorings. The former does not evaluate to \emph{true}
+for any class, and so it fails to satisfy the first requirement.
+The latter evaluates to \emph{true} even
+for non-halting machines, and so it fails to satisfy the
+second requirement.
+
+Two interesting colorings are:
+
+\begin{enumerate}
+    \item The coloring of \emph{Turing Machines that always halt}.
+          This colors every machine that always halts, but
+          leaves every machine that does not always halt uncolored.
+    \item The coloring of the machine with the \emph{shortest description}
+          among all the machines computing the same problem.
+\end{enumerate}
+
+The first coloring elects multiple representatives per class. In
+fact, it colors every machine in every class of machines, if we
+consider the classes of machines based on whether they decide
+the same problem (it leaves machines that do not decide problems
+uncolored). The second coloring
+elects a finite number of representatives per class (and only one
+if there is a unique shortest machine among its peers).
+
+We now examine the question of whether such colorings are
+computable, the \emph{Machine Coloring Problem}.
+As we will see, not only do they fail to be computable,
+but they also fail to be enumerable. Our theorem is applied on
+generic colorings. Applying it to the first coloring example
+above gives rise to the uncomputability
+of the Halting Problem. Applying it to the second example
+gives rise to Chaitin's Incompressibility Theorem.
+
+\section{Colorings are Uncomputable}
+Our result indicates that, regardless of the coloring choice,
+determining the color of a machine is uncomputable and unenumerable.
+Our proof follows a standard diagonal argument.
+
+\begin{theorem}[Coloring Unenumerability]\label{thm:color}
+    Any machine coloring is non-enumerable.
+\end{theorem}
+\begin{proof}
+    Consider an arbitrary machine coloring $p$. Suppose for
+    contradiction that there exists a machine $M$ which enumerates
+    all the machines for which $p$ holds.
+
+    Then we construct the following machine $\Delta$:
+
+    \begin{quote}
+        `` On input $i \in \mathbb{N}$:
+        \begin{itemize}
+            \item Run $M$ until you obtain its $i^\text{th}$ output, $M^*$.
+            \item Run $M^*$ on input $i$ to obtain output $b$.
+            \item Output $\lnot b$. ''
+        \end{itemize}
+    \end{quote}
+
+    $\Delta$ is an always-terminating machine, because for every $i$, the
+    enumerator $M$ will always output an $i^\text{th}$ machine.
+    This is because there are infinite solvable problems, and
+    there exists a colored machine for every one of them.
+    Furthermore, the machine $M^*$ is always-terminating (due to the
+    second requirement of colorings), and so
+    the evaluation $M^*(i)$ will halt.
+
+    Now observe that the machine $\Delta$ cannot be equivalent to any colored
+    machine. This is because,
+    for the $i^\text{th}$ colored machine $M^*$, we have
+    $\Delta(i) \neq M^*(i)$. However, by the first requirement of colorings,
+    there must exist a colored representative
+    $M^*$ in the equivalence class $[\Delta]$, which is a contradiction.
+    \qed
+\end{proof}
+
+\section{Relationship of Colorings to Other Problems}
+
+Applying our theorem to two interesting colorings allows us to prove
+the two well-known theorems from the theory of computation, namely
+that the Halting Problem is uncomputable as well as Chaitin's Incompleteness
+Theorem. We provide them as corollaries here.
+
+\begin{corollary}[Turing's Halting Unenumerability]
+    The set of Turing Machines that halt on every input is
+    non-enumerable.
+\end{corollary}
+\begin{proof}
+    Apply Theorem~\ref{thm:color}
+    to the coloring which colors exactly all machines that
+    always halt.
+    \qed
+\end{proof}
+
+\begin{corollary}[Chaitin's Incompleteness]
+    The set of Kolmogorov-minimal Turing Machines is
+    non-enumerable.
+\end{corollary}
+\begin{proof}
+    Apply Theorem~\ref{thm:color}
+    to the coloring which colors exactly those machines
+    that are minimal for their respective classes.
+    \qed
+\end{proof}
+
+\section{Conclusion}
+In this work, we considered properties of Turing Machines and
+their computability. Going beyond the semantic properties of Rice's
+theorem, we considered properties that have at least one
+representative for each equivalence class, but no representatives
+for machines that do not decide any problems. Using a diagonal
+argument, we showed that such properties, which we call
+machine \emph{colorings}, are not only uncomputable, but also
+non-enumerable. Our theorem is a generalization of both Turing's
+Halting Problem result, as well as Chaitin's Incompleteness Theorem.
+We hope that this connection between the two problems provides some
+insight and that this alternative way of looking at these
+foundational results can be educational.
+
+\bibliographystyle{format/splncs04}
+\bibliography{biblio}
+
+\end{document}
